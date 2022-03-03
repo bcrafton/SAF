@@ -10,10 +10,16 @@ class model:
     def __init__(self, layers):
         self.layers = layers
         
-    def forward(self, x):
+    def train(self, x):
         y = x
         for layer in self.layers:
-            y = layer.forward(y)
+            y = layer.train(y)
+        return y
+
+    def predict(self, x):
+        y = x
+        for layer in self.layers:
+            y = layer.predict(y)
         return y
 
     def get_params(self):
@@ -37,7 +43,10 @@ class layer:
     def __init__(self):
         assert(False)
         
-    def forward(self, x):        
+    def train(self, x):        
+        assert(False)
+
+    def predict(self, x):        
         assert(False)
 
     def get_params(self):
@@ -63,7 +72,13 @@ class dense_block(layer):
         else:
             self.w = tf.Variable(np.random.uniform(low=-0.01, high=0.01, size=self.shape), dtype=tf.float32)
 
-    def forward(self, x):
+    def train(self, x):
+        x = tf.reshape(x, (-1, self.shape[0]))
+        y = tf.matmul(x, self.w)
+        z = tf.nn.relu(y) if self.act else y
+        return z
+
+    def predict(self, x):
         x = tf.reshape(x, (-1, self.shape[0]))
         y = tf.matmul(x, self.w)
         z = tf.nn.relu(y) if self.act else y

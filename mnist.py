@@ -39,7 +39,7 @@ optimizer = tf.keras.optimizers.Adam()
 @tf.function(experimental_relax_shapes=False)
 def gradients(model, x, y):
     with tf.GradientTape() as tape:
-        pred_logits = model.forward(x)
+        pred_logits = model.train(x)
         pred_label = tf.argmax(pred_logits, axis=1)
         loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=y, logits=pred_logits)
         correct = tf.reduce_sum(tf.cast(tf.equal(pred_label, y), tf.float32))
@@ -50,7 +50,7 @@ def gradients(model, x, y):
 ####################################
 
 def predict(model, x, y):
-    pred_logits = model.forward(x)
+    pred_logits = model.predict(x)
     pred_label = tf.argmax(pred_logits, axis=1)
     correct = tf.reduce_sum(tf.cast(tf.equal(pred_label, y), tf.float32))
     return correct
